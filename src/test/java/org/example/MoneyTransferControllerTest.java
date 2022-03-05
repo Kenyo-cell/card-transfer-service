@@ -45,7 +45,7 @@ public class MoneyTransferControllerTest {
                 .andReturn();
         var response = Jackson2ObjectMapperBuilder.json().build()
                 .readValue(result.getResponse().getContentAsByteArray(), SuccessResponse.class);
-        Assertions.assertEquals(testOperationId, response.getOperationId());
+        Assertions.assertEquals(testOperationId, response.operationId());
     }
 
     @Test
@@ -67,7 +67,7 @@ public class MoneyTransferControllerTest {
 
         var response = Jackson2ObjectMapperBuilder.json().build()
                 .readValue(result.getResponse().getContentAsByteArray(), ErrorResponse.class);
-        Assertions.assertEquals(response.getMessage(), message);
+        Assertions.assertEquals(response.message(), message);
     }
 
     @Test

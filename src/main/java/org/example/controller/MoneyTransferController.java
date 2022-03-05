@@ -16,13 +16,13 @@ public class MoneyTransferController {
     @Autowired
     private MoneyTransferService service;
 
-    @PostMapping(value = "/transfer", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/transfer", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SuccessResponse> transfer(@RequestBody TransferData transferData) {
-        return ResponseEntity.ok(service.transfer());
+        return ResponseEntity.ok(service.transfer(transferData));
     }
 
-    @PostMapping(value = "/confirmOperation", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/confirmOperation", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SuccessResponse> confirmOperation(@RequestBody ConfirmData confirmData) {
-        return ResponseEntity.ok(service.confirm());
+        return ResponseEntity.ok(service.confirm(confirmData));
     }
 }

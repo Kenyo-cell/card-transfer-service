@@ -13,7 +13,6 @@ public class BeanConfiguration {
     @Bean
     @ConditionalOnProperty(prefix = "application", value = "profile", havingValue = "front")
     public MoneyTransferRepository frontMoneyTransferRepository() {
-        System.out.println("front");
         return new FrontMoneyTransferRepository();
     }
 

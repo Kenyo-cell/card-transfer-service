@@ -10,7 +10,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 @ControllerAdvice
 public class ExceptionController extends ResponseEntityExceptionHandler {
-    @ExceptionHandler({ ConfirmationException.class, TransferException.class })
+    @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ErrorResponse> handleBadGatewayException(RuntimeException e) {
         int id = 0;
         logException(e);

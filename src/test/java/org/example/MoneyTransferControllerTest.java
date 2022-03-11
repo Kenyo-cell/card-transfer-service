@@ -1,7 +1,6 @@
 package org.example;
 
 import org.example.controller.MoneyTransferController;
-import org.example.exception.ConfirmationException;
 import org.example.exception.IncorrectInputException;
 import org.example.request.confirm.ConfirmData;
 import org.example.request.transfer.TransferData;
@@ -105,7 +104,7 @@ public class MoneyTransferControllerTest {
         ConfirmData data = Jackson2ObjectMapperBuilder.json().build()
                 .readValue(json, ConfirmData.class);
 
-        Mockito.when(service.confirm(data)).thenThrow(new ConfirmationException(exceptionMessage));
+        Mockito.when(service.confirm(data)).thenThrow(new IncorrectInputException(exceptionMessage));
 
         var result = mockMvc.perform(
                         post("/confirmOperation")

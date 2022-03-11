@@ -1,8 +1,23 @@
 package org.example.repository;
 
-public class RestMoneyTransferRepository implements MoneyTransferRepository {
-    @Override
-    public void writeTransferTransaction() {
+import org.example.request.transfer.TransferData;
 
+import java.util.Optional;
+
+public class RestMoneyTransferRepository extends MoneyTransferRepository {
+
+    @Override
+    public void writeTransferTransaction(TransferData data) {
+
+    }
+
+    @Override
+    protected String generateCode() {
+        return null;
+    }
+
+    @Override
+    public Optional<String> getCodeByOperationId(String operationId) {
+        return Optional.empty();
     }
 }

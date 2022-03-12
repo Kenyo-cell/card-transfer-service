@@ -1,5 +1,6 @@
 package org.example.request.transfer;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -12,6 +13,7 @@ import javax.validation.constraints.Positive;
 
 @Component
 @Data
+@AllArgsConstructor
 @NoArgsConstructor
 public class Amount {
     @Positive(message = "Amount value must be positive value")

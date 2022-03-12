@@ -112,7 +112,7 @@ public class MoneyTransferControllerTest {
                                 .content(json)
                 )
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadGateway())
+                .andExpect(status().isBadRequest())
                 .andReturn();
 
         var response = Jackson2ObjectMapperBuilder.json().build()

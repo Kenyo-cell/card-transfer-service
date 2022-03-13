@@ -7,6 +7,7 @@ import org.example.request.transfer.Amount;
 import org.example.request.transfer.TransferData;
 import org.example.response.success.SuccessResponse;
 import org.example.service.MoneyTransferService;
+import org.example.util.CodeGenerator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -22,7 +23,7 @@ public class MoneyTransferServiceTest {
 
     @Test
     public void shouldThrowExceptionDueToSameCardToAndFromNumbers() {
-        String operationId = "213";
+        String verificationCode = "2123";
         TransferData data = new TransferData(
                 "0000000000000000",
                 "12/24",
@@ -30,15 +31,19 @@ public class MoneyTransferServiceTest {
                 "0000000000000000",
                 new Amount(10000, "RUR")
         );
+
+        CodeGenerator generator = Mockito.mock(CodeGenerator.class);
+        Mockito.when(generator.generate()).thenReturn(verificationCode);
+
         MoneyTransferRepository repository = Mockito.mock(MoneyTransferRepository.class);
-        Mockito.doNothing().when(repository).writeTransferTransaction(data);
+        Mockito.doNothing().when(repository).writeTransferTransaction(data, verificationCode);
 
         Assertions.assertThrows(IncorrectInputException.class, () -> service.transfer(data));
     }
 
     @Test
     public void shouldThrowExceptionDueToCardDateExpired() {
-        String operationId = "213";
+        String verificationCode = "2131";
         TransferData data = new TransferData(
                 "0000000000000000",
                 "12/20",
@@ -46,15 +51,19 @@ public class MoneyTransferServiceTest {
                 "1234567890123456",
                 new Amount(10000, "RUR")
         );
+
+        CodeGenerator generator = Mockito.mock(CodeGenerator.class);
+        Mockito.when(generator.generate()).thenReturn(verificationCode);
+
         MoneyTransferRepository repository = Mockito.mock(MoneyTransferRepository.class);
-        Mockito.doNothing().when(repository).writeTransferTransaction(data);
+        Mockito.doNothing().when(repository).writeTransferTransaction(data, verificationCode);
 
         Assertions.assertThrows(IncorrectInputException.class, () -> service.transfer(data));
     }
 
     @Test
     public void transferShouldReturnSuccessResponse() {
-        String operationId = "213";
+        String verificationCode = "2131";
         TransferData data = new TransferData(
                 "0000000000000000",
                 "12/24",
@@ -62,8 +71,12 @@ public class MoneyTransferServiceTest {
                 "1234567890123456",
                 new Amount(10000, "RUR")
         );
+
+        CodeGenerator generator = Mockito.mock(CodeGenerator.class);
+        Mockito.when(generator.generate()).thenReturn(verificationCode);
+
         MoneyTransferRepository repository = Mockito.mock(MoneyTransferRepository.class);
-        Mockito.doNothing().when(repository).writeTransferTransaction(data);
+        Mockito.doNothing().when(repository).writeTransferTransaction(data, verificationCode);
 
         SuccessResponse res = service.transfer(data);
         Assertions.assertFalse(res.operationId().isEmpty());
@@ -74,6 +87,7 @@ public class MoneyTransferServiceTest {
         String operationId = "123";
         String code = "1000";
         ConfirmData data = new ConfirmData(operationId, code);
+
         MoneyTransferRepository repository = Mockito.mock(MoneyTransferRepository.class);
         Mockito.when(repository.getCodeByOperationId(data.getOperationId())).thenReturn(Optional.of(code));
 

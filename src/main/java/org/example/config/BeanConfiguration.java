@@ -1,9 +1,8 @@
 package org.example.config;
 
-import org.example.repository.MoneyTransferRepository;
-import org.example.util.CodeGenerator;
-import org.example.util.FrontCodeGenerator;
-import org.example.util.RestCodeGenerator;
+import org.example.util.generator.CodeGenerator;
+import org.example.util.generator.FrontCodeGenerator;
+import org.example.util.generator.RestCodeGenerator;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

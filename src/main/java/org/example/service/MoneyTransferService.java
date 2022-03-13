@@ -5,7 +5,8 @@ import org.example.repository.MoneyTransferRepository;
 import org.example.request.confirm.ConfirmData;
 import org.example.request.transfer.TransferData;
 import org.example.response.success.SuccessResponse;
-import org.example.util.CodeGenerator;
+import org.example.util.generator.CodeGenerator;
+import org.example.util.validate.CardValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,11 +19,19 @@ public class MoneyTransferService {
     private CodeGenerator generator;
 
     public SuccessResponse transfer(TransferData data) throws IncorrectInputException {
-        repository.writeTransferTransaction(data, generator.generate());
-        return new SuccessResponse("123");
+        new CardValidator().validate(data);
+
+        String operationId = repository.writeTransferTransactionAndGetOperationId(data, generator.generate());
+
+        if (operationId.isBlank())
+            throw new RuntimeException("Can't write transaction");
+
+        return new SuccessResponse(operationId);
     }
 
     public SuccessResponse confirm(ConfirmData data) throws IncorrectInputException {
-        return new SuccessResponse("213");
+        String operationId = repository.getCodeByOperationId(data.getOperationId())
+                .orElseThrow(() -> new IncorrectInputException("Can't find presented Operation Id"));
+        return new SuccessResponse(operationId);
     }
 }

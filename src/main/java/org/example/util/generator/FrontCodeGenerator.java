@@ -1,4 +1,4 @@
-package org.example.util;
+package org.example.util.generator;
 
 public class FrontCodeGenerator implements CodeGenerator {
 

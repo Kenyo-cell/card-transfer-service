@@ -1,18 +1,23 @@
 package org.example;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.controller.MoneyTransferController;
+import org.example.entity.request.transfer.Amount;
 import org.example.exception.IncorrectInputException;
 import org.example.entity.request.confirm.ConfirmData;
 import org.example.entity.request.transfer.TransferData;
 import org.example.entity.response.error.ErrorResponse;
 import org.example.entity.response.success.SuccessResponse;
 import org.example.service.MoneyTransferService;
+import org.example.util.generator.OperationIdGenerator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.test.web.servlet.MockMvc;
@@ -29,95 +34,130 @@ public class MoneyTransferControllerTest {
     @MockBean
     private MoneyTransferService service;
 
+    @SpyBean
+    private OperationIdGenerator generator;
+
+    private final ObjectMapper mapper = Jackson2ObjectMapperBuilder.json().build();
+
+    private final TransferData correctTransferData = new TransferData(
+            "1234567812345678",
+            "02/32",
+            "145",
+            "1234567890123456",
+            new Amount(
+                    1234,
+                    "RUR"
+            )
+    );
+
+    private final TransferData equalsCardNumbers = new TransferData(
+            "1234567812345678",
+            "02/32",
+            "145",
+            "1234567812345678",
+            new Amount(
+                    1234,
+                    "RUR"
+            )
+    );
+
+    private final ConfirmData correctConfirm = new ConfirmData(
+            "123",
+            "0000"
+    );
+
+    private final ConfirmData incorrectConfirm = new ConfirmData(
+            "133",
+            "1234"
+    );
+
     @Test
     public void correctJsonDataProvidesOkCodeAndJsonMediaTypeAndCorrectContent() throws Exception {
         String testOperationId = "0";
-        String json = "{\"cardFromNumber\": \"0000000000000000\",\"cardFromValidTill\":\"12/24\",\"cardFromCVV\":\"123\",\"cardToNumber\":\"1234567890123456\",\"amount\":{\"value\":100,\"currency\":\"RUR\"}}";
-        TransferData data = Jackson2ObjectMapperBuilder.json().build()
-                .readValue(json.getBytes(), TransferData.class);
 
-        Mockito.when(service.transfer(data)).thenReturn(new SuccessResponse(testOperationId));
+        Mockito.when(service.transfer(correctTransferData))
+                .thenReturn(new SuccessResponse(testOperationId));
 
         var result = mockMvc.perform(post("/transfer")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(json)
+                        .content(mapper.writeValueAsString(correctTransferData))
                 )
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
-        var response = Jackson2ObjectMapperBuilder.json().build()
-                .readValue(result.getResponse().getContentAsByteArray(), SuccessResponse.class);
+
+        var response = mapper.readValue(
+                result.getResponse().getContentAsByteArray(),
+                SuccessResponse.class
+        );
+
         Assertions.assertEquals(testOperationId, response.operationId());
     }
 
     @Test
-    public void shouldReturnBadRequestWithIncorrectTransferData() throws Exception {
-        String message = "Card From Number and Card To Number should have different values";
-        String json = "{\"cardFromNumber\": \"0000000000000000\",\"cardFromValidTill\":\"12/24\",\"cardFromCVV\":\"123\",\"cardToNumber\":\"0000000000000000\",\"amount\":{\"value\":100,\"currency\":\"RUR\"}}";
-        TransferData data = Jackson2ObjectMapperBuilder.json().build()
-                        .readValue(json.getBytes(), TransferData.class);
-
-        Mockito.when(service.transfer(data)).thenThrow(new IncorrectInputException(message));
+    public void shouldReturnBadRequestWithEqualsCardNumbers() throws Exception {
+        Mockito.when(service.transfer(equalsCardNumbers))
+                .thenThrow(new IncorrectInputException("Card Numbers should be different"));
 
         var result = mockMvc.perform(
                 post("/transfer")
-                        .content(json)
+                        .content(mapper.writeValueAsString(equalsCardNumbers))
                         .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andReturn();
 
-        var response = Jackson2ObjectMapperBuilder.json().build()
-                .readValue(result.getResponse().getContentAsByteArray(), ErrorResponse.class);
-        Assertions.assertEquals(response.message(), message);
+        var response = mapper.readValue(
+                result.getResponse().getContentAsByteArray(),
+                ErrorResponse.class
+        );
+
+        Assertions.assertFalse(response.message().isBlank());
     }
 
     @Test
     public void correctConfirmOperationReturnsOkAndCorrectContent() throws Exception {
         String operationId = "12345679";
-        String json = "{\"operationId\":\"12345678\",\"code\":\"0000\"}";
-        ConfirmData data = Jackson2ObjectMapperBuilder.json().build()
-                .readValue(json, ConfirmData.class);
 
-        Mockito.when(service.confirm(data)).thenReturn(new SuccessResponse(operationId));
+        Mockito.when(service.confirm(correctConfirm)).thenReturn(new SuccessResponse(operationId));
 
         var result = mockMvc.perform(
                 post("/confirmOperation")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(json)
+                        .content(mapper.writeValueAsString(correctConfirm))
                 )
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
 
-        var response = Jackson2ObjectMapperBuilder.json().build()
-                        .readValue(result.getResponse().getContentAsByteArray(), SuccessResponse.class);
+        var response = mapper.readValue(
+                result.getResponse().getContentAsByteArray(),
+                SuccessResponse.class
+        );
 
         Assertions.assertEquals(operationId, response.operationId());
     }
 
     @Test
     public void shouldReturnBadRequestWithIncorrectConfirmData() throws Exception {
-        String exceptionMessage = "Invalid Confirmation Code";
-        String json = "{\"operationId\":\"12345678\",\"code\":\"0000\"}";
-        ConfirmData data = Jackson2ObjectMapperBuilder.json().build()
-                .readValue(json, ConfirmData.class);
-
-        Mockito.when(service.confirm(data)).thenThrow(new IncorrectInputException(exceptionMessage));
+        Mockito.when(service.confirm(incorrectConfirm))
+                .thenThrow(new IncorrectInputException("Invalid confirm code"));
 
         var result = mockMvc.perform(
                         post("/confirmOperation")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(json)
+                                .content(mapper.writeValueAsString(incorrectConfirm))
                 )
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andReturn();
 
-        var response = Jackson2ObjectMapperBuilder.json().build()
-                .readValue(result.getResponse().getContentAsByteArray(), ErrorResponse.class);
+        var response = mapper.readValue(
+                result.getResponse().getContentAsByteArray(),
+                ErrorResponse.class
+        );
 
-        Assertions.assertEquals(exceptionMessage, response.message());
+        Assertions.assertFalse(response.message().isBlank());
     }
 }

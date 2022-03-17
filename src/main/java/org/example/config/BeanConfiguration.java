@@ -1,7 +1,6 @@
 package org.example.config;
 
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
-import org.example.entity.request.transfer.TransferData;
 import org.example.entity.writer.WriteData;
 import org.example.util.generator.CodeGenerator;
 import org.example.util.generator.FrontCodeGenerator;
@@ -12,7 +11,6 @@ import org.example.util.writer.Writer;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Scope;
 
 import java.util.Map;
 
@@ -32,7 +30,6 @@ public class BeanConfiguration {
     }
 
     @Bean
-    @Scope("singleton")
     public OperationIdGenerator operationIdGenerator() {
         return new OperationIdGenerator();
     }

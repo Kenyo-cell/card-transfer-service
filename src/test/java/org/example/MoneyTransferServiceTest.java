@@ -86,10 +86,20 @@ public class MoneyTransferServiceTest {
         ConfirmData data = new ConfirmData(OPERATION_ID, CODE);
 
         Mockito.when(repository.getOperationIdWithConfirmedTransaction(data))
-                .thenReturn(CODE);
+                .thenReturn("9");
 
         SuccessResponse res = service.confirm(data);
         Assertions.assertFalse(res.operationId().isEmpty());
         Assertions.assertNotEquals(res.operationId(), OPERATION_ID);
+    }
+
+    @Test
+    public void shouldThrowIncorrectInputExceptionDueToIncorrectCode() {
+        ConfirmData data = new ConfirmData(OPERATION_ID, CODE);
+
+        Mockito.when(repository.getOperationIdWithConfirmedTransaction(data))
+                .thenThrow(IncorrectInputException.class);
+
+        Assertions.assertThrows(IncorrectInputException.class, () -> service.confirm(data));
     }
 }

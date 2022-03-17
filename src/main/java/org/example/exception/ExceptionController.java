@@ -19,18 +19,18 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 public class ExceptionController extends ResponseEntityExceptionHandler {
     @Autowired
-    private OperationIdGenerator generator;
+    private OperationIdGenerator operationIdGenerator;
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ErrorResponse> handleBadGatewayException(RuntimeException e) {
-        int id = Integer.parseInt(generator.generateId());
+        int id = Integer.parseInt(operationIdGenerator.generateId());
         logException(e);
         return new ResponseEntity<>(new ErrorResponse(e.getMessage(), id), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(IncorrectInputException.class)
     public ResponseEntity<ErrorResponse> handleBadRequestException(RuntimeException e) {
-        int id = Integer.parseInt(generator.generateId());;
+        int id = Integer.parseInt(operationIdGenerator.generateId());
         logException(e);
         return new ResponseEntity<>(new ErrorResponse(e.getMessage(), id), HttpStatus.BAD_REQUEST);
     }
@@ -44,7 +44,10 @@ public class ExceptionController extends ResponseEntityExceptionHandler {
                 .stream()
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .collect(Collectors.joining("; "));
-        return new ResponseEntity<>(new ErrorResponse(message, 0), HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(
+                new ErrorResponse(message, Integer.parseInt(operationIdGenerator.generateId())),
+                HttpStatus.INTERNAL_SERVER_ERROR
+        );
     }
 
     public void logException(RuntimeException e) {

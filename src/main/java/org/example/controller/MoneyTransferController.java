@@ -1,8 +1,8 @@
 package org.example.controller;
 
-import org.example.request.confirm.ConfirmData;
-import org.example.request.transfer.TransferData;
-import org.example.response.success.SuccessResponse;
+import org.example.entity.request.confirm.ConfirmData;
+import org.example.entity.request.transfer.TransferData;
+import org.example.entity.response.success.SuccessResponse;
 import org.example.service.MoneyTransferService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;

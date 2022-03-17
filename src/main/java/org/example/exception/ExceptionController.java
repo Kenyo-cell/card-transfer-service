@@ -1,6 +1,6 @@
 package org.example.exception;
 
-import org.example.response.error.ErrorResponse;
+import org.example.entity.response.error.ErrorResponse;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -11,8 +11,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import javax.validation.ValidationException;
-import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
 
 
@@ -22,7 +20,7 @@ public class ExceptionController extends ResponseEntityExceptionHandler {
     public ResponseEntity<ErrorResponse> handleBadGatewayException(RuntimeException e) {
         int id = 0;
         logException(e);
-        return new ResponseEntity<>(new ErrorResponse(e.getMessage(), id), HttpStatus.BAD_GATEWAY);
+        return new ResponseEntity<>(new ErrorResponse(e.getMessage(), id), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(IncorrectInputException.class)
@@ -41,7 +39,7 @@ public class ExceptionController extends ResponseEntityExceptionHandler {
                 .stream()
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .collect(Collectors.joining("; "));
-        return new ResponseEntity<>(new ErrorResponse(message, 0), HttpStatus.BAD_GATEWAY);
+        return new ResponseEntity<>(new ErrorResponse(message, 0), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     public void logException(RuntimeException e) {

@@ -1,4 +1,4 @@
-package org.example.request.transfer;
+package org.example.entity.request.transfer;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

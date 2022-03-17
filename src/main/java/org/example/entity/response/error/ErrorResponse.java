@@ -1,3 +1,3 @@
-package org.example.response.error;
+package org.example.entity.response.error;
 
 public record ErrorResponse(String message, int id) { }

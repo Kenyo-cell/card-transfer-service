@@ -1,7 +1,7 @@
 package org.example.util.validate;
 
 import org.example.exception.IncorrectInputException;
-import org.example.request.transfer.TransferData;
+import org.example.entity.request.transfer.TransferData;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

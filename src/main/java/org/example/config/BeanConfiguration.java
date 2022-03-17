@@ -1,13 +1,20 @@
 package org.example.config;
 
+import com.fasterxml.jackson.dataformat.csv.CsvMapper;
+import org.example.entity.request.transfer.TransferData;
+import org.example.entity.writer.WriteData;
 import org.example.util.generator.CodeGenerator;
 import org.example.util.generator.FrontCodeGenerator;
 import org.example.util.generator.OperationIdGenerator;
 import org.example.util.generator.RestCodeGenerator;
+import org.example.util.writer.CSVWriterImpl;
+import org.example.util.writer.Writer;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
+
+import java.util.Map;
 
 @Configuration
 public class BeanConfiguration {
@@ -28,5 +35,16 @@ public class BeanConfiguration {
     @Scope("singleton")
     public OperationIdGenerator operationIdGenerator() {
         return new OperationIdGenerator();
+    }
+
+    @Bean
+    public Writer csvWriter() {
+        return new CSVWriterImpl()
+                .ofMappers(
+                        Map.of(
+                                WriteData.class,
+                                new CsvMapper().writerFor(WriteData.class)
+                        )
+                );
     }
 }

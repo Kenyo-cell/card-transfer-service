@@ -1,4 +1,4 @@
-package org.example.request.confirm;
+package org.example.entity.request.confirm;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

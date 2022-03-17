@@ -2,9 +2,9 @@ package org.example.service;
 
 import org.example.exception.IncorrectInputException;
 import org.example.repository.MoneyTransferRepository;
-import org.example.request.confirm.ConfirmData;
-import org.example.request.transfer.TransferData;
-import org.example.response.success.SuccessResponse;
+import org.example.entity.request.confirm.ConfirmData;
+import org.example.entity.request.transfer.TransferData;
+import org.example.entity.response.success.SuccessResponse;
 import org.example.util.generator.CodeGenerator;
 import org.example.util.validate.CardValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,8 +30,9 @@ public class MoneyTransferService {
     }
 
     public SuccessResponse confirm(ConfirmData data) throws IncorrectInputException {
-        String operationId = repository.getCodeByOperationId(data.getOperationId())
+        String operationId = repository.getOperationIdWithConfirmedOperationId(data.getOperationId())
                 .orElseThrow(() -> new IncorrectInputException("Can't find presented Operation Id"));
+
         return new SuccessResponse(operationId);
     }
 }

@@ -1,3 +1,3 @@
-package org.example.response.success;
+package org.example.entity.response.success;
 
 public record SuccessResponse(String operationId) { }

@@ -1,6 +1,7 @@
 package org.example.config;
 
-import com.fasterxml.jackson.dataformat.csv.CsvMapper;
+import lombok.SneakyThrows;
+import org.example.entity.request.transfer.TransferData;
 import org.example.entity.writer.WriteData;
 import org.example.util.generator.CodeGenerator;
 import org.example.util.generator.FrontCodeGenerator;
@@ -11,8 +12,6 @@ import org.example.util.writer.Writer;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import java.util.Map;
 
 @Configuration
 public class BeanConfiguration {
@@ -35,13 +34,8 @@ public class BeanConfiguration {
     }
 
     @Bean
+    @SneakyThrows
     public Writer csvWriter() {
-        return new CSVWriterImpl()
-                .ofMappers(
-                        Map.of(
-                                WriteData.class,
-                                new CsvMapper().writerFor(WriteData.class)
-                        )
-                );
+        return new CSVWriterImpl(WriteData.class, System.out);
     }
 }

@@ -22,7 +22,7 @@ import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 @Testcontainers(disabledWithoutDocker = true)
 @ExtendWith(SpringExtension.class)
 public class FrontendIntegrationTest {
-    private final static String FRONT_CONTAINER_NAME = "card-transfer:front";
+    private final static String FRONT_CONTAINER_NAME = "keny0cell/card-transfer:front";
     private final static int PORT = 5500;
     private final static String URL = "http://localhost:%d";
     private final static HttpHeaders headers = new HttpHeaders();

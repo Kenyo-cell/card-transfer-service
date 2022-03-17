@@ -1,6 +1,8 @@
 package org.example.exception;
 
 import org.example.entity.response.error.ErrorResponse;
+import org.example.util.generator.OperationIdGenerator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -16,16 +18,19 @@ import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class ExceptionController extends ResponseEntityExceptionHandler {
+    @Autowired
+    private OperationIdGenerator generator;
+
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ErrorResponse> handleBadGatewayException(RuntimeException e) {
-        int id = 0;
+        int id = Integer.parseInt(generator.generateId());
         logException(e);
         return new ResponseEntity<>(new ErrorResponse(e.getMessage(), id), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(IncorrectInputException.class)
     public ResponseEntity<ErrorResponse> handleBadRequestException(RuntimeException e) {
-        int id = 0;
+        int id = Integer.parseInt(generator.generateId());;
         logException(e);
         return new ResponseEntity<>(new ErrorResponse(e.getMessage(), id), HttpStatus.BAD_REQUEST);
     }

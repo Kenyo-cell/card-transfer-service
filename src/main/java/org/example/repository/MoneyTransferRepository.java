@@ -1,5 +1,6 @@
 package org.example.repository;
 
+import org.example.entity.request.confirm.ConfirmData;
 import org.example.entity.writer.WriteData;
 import org.example.exception.IncorrectInputException;
 import org.example.entity.request.transfer.TransferData;
@@ -33,11 +34,14 @@ public class MoneyTransferRepository {
         return operationId;
     }
 
-    public String getOperationIdWithConfirmedOperationId(String transferOperationId) {
-        if (Optional.ofNullable(verificationCodeByOperationId.get(transferOperationId)).isEmpty())
+    public String getOperationIdWithConfirmedTransaction(ConfirmData data) {
+        if (!verificationCodeByOperationId.containsKey(data.getOperationId()))
             throw new IncorrectInputException("Unknown operationId");
 
-        verificationCodeByOperationId.remove(transferOperationId);
+        if (!verificationCodeByOperationId.get(data.getOperationId()).equals(data.getCode()))
+            throw new IncorrectInputException("Confirmation Exception: incorrect verification code");
+
+        verificationCodeByOperationId.remove(data.getOperationId());
         return generator.generateId();
     }
 }

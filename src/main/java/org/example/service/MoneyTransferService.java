@@ -30,7 +30,7 @@ public class MoneyTransferService {
     }
 
     public SuccessResponse confirm(ConfirmData data) throws IncorrectInputException {
-        String operationId = repository.getOperationIdWithConfirmedOperationId(data.getOperationId());
+        String operationId = repository.getOperationIdWithConfirmedTransaction(data);
 
         return new SuccessResponse(operationId);
     }

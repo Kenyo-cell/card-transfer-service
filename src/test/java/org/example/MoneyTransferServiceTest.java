@@ -15,8 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
-import java.util.Optional;
-
 @SpringBootTest
 public class MoneyTransferServiceTest {
     @Autowired
@@ -87,7 +85,7 @@ public class MoneyTransferServiceTest {
     public void confirmShouldReturnSuccessResponse() {
         ConfirmData data = new ConfirmData(OPERATION_ID, CODE);
 
-        Mockito.when(repository.getOperationIdWithConfirmedOperationId(data.getOperationId()))
+        Mockito.when(repository.getOperationIdWithConfirmedTransaction(data))
                 .thenReturn(CODE);
 
         SuccessResponse res = service.confirm(data);

@@ -2,10 +2,10 @@ package org.example;
 
 import org.example.exception.IncorrectInputException;
 import org.example.repository.MoneyTransferRepository;
-import org.example.request.confirm.ConfirmData;
-import org.example.request.transfer.Amount;
-import org.example.request.transfer.TransferData;
-import org.example.response.success.SuccessResponse;
+import org.example.entity.request.confirm.ConfirmData;
+import org.example.entity.request.transfer.Amount;
+import org.example.entity.request.transfer.TransferData;
+import org.example.entity.response.success.SuccessResponse;
 import org.example.service.MoneyTransferService;
 import org.example.util.generator.CodeGenerator;
 import org.junit.jupiter.api.Assertions;
@@ -87,7 +87,8 @@ public class MoneyTransferServiceTest {
     public void confirmShouldReturnSuccessResponse() {
         ConfirmData data = new ConfirmData(OPERATION_ID, CODE);
 
-        Mockito.when(repository.getCodeByOperationId(data.getOperationId())).thenReturn(Optional.of(CODE));
+        Mockito.when(repository.getOperationIdWithConfirmedOperationId(data.getOperationId()))
+                .thenReturn(Optional.of(CODE));
 
         SuccessResponse res = service.confirm(data);
         Assertions.assertFalse(res.operationId().isEmpty());

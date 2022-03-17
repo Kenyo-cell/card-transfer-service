@@ -2,10 +2,10 @@ package org.example;
 
 import org.example.controller.MoneyTransferController;
 import org.example.exception.IncorrectInputException;
-import org.example.request.confirm.ConfirmData;
-import org.example.request.transfer.TransferData;
-import org.example.response.error.ErrorResponse;
-import org.example.response.success.SuccessResponse;
+import org.example.entity.request.confirm.ConfirmData;
+import org.example.entity.request.transfer.TransferData;
+import org.example.entity.response.error.ErrorResponse;
+import org.example.entity.response.success.SuccessResponse;
 import org.example.service.MoneyTransferService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

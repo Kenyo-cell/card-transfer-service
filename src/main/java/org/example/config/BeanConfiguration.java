@@ -1,7 +1,6 @@
 package org.example.config;
 
 import lombok.SneakyThrows;
-import org.example.entity.request.transfer.TransferData;
 import org.example.entity.writer.WriteData;
 import org.example.util.generator.CodeGenerator;
 import org.example.util.generator.FrontCodeGenerator;

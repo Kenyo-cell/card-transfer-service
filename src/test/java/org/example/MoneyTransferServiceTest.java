@@ -88,7 +88,7 @@ public class MoneyTransferServiceTest {
         ConfirmData data = new ConfirmData(OPERATION_ID, CODE);
 
         Mockito.when(repository.getOperationIdWithConfirmedOperationId(data.getOperationId()))
-                .thenReturn(Optional.of(CODE));
+                .thenReturn(CODE);
 
         SuccessResponse res = service.confirm(data);
         Assertions.assertFalse(res.operationId().isEmpty());

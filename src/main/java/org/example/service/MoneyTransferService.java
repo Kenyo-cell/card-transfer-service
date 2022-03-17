@@ -30,8 +30,7 @@ public class MoneyTransferService {
     }
 
     public SuccessResponse confirm(ConfirmData data) throws IncorrectInputException {
-        String operationId = repository.getOperationIdWithConfirmedOperationId(data.getOperationId())
-                .orElseThrow(() -> new IncorrectInputException("Can't find presented Operation Id"));
+        String operationId = repository.getOperationIdWithConfirmedOperationId(data.getOperationId());
 
         return new SuccessResponse(operationId);
     }
